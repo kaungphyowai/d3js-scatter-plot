@@ -24,11 +24,13 @@ fetch(
     //Draw the Xaxis
     let yearMin = d3.min(yearsRange);
     let yearMax = d3.max(yearsRange);
+    yearMin.setFullYear(yearMin.getFullYear() - 1);
+    yearMax.setFullYear(yearMax.getFullYear() + 1);
     let xScale = d3
       .scaleLinear()
-      .domain([yearMin.getFullYear() - 1, yearMax.getFullYear() + 1])
+      .domain([yearMin, yearMax])
       .range([xStratPoint, xEndPoint]);
-    let Xaxis = d3.axisBottom(xScale);
+    let Xaxis = d3.axisBottom(xScale).tickFormat(d3.utcFormat("%Y"));
     svg
       .append("g")
       .attr("transform", "translate(" + 0 + ", " + yEndPoint + ")")
@@ -61,10 +63,10 @@ fetch(
       .attr("class", "dot")
       .attr("data-xvalue", (d) => new Date(d["Year"].toString()))
       .attr("data-yvalue", (d) => new Date(d["Seconds"] * 1000))
-      .attr("cx", (d) => xScale(d["Year"]))
-      .attr("cy", (d) => Yscale(d["Seconds"] * 1000))
-      .attr("r", 10)
+      .attr("cx", (d) => xScale(new Date(d["Year"].toString())))
+      .attr("cy", (d) => Yscale(new Date(d["Seconds"] * 1000)))
+      .attr("r", 1.5)
       .style("fill", "black");
-    let temp = Yscale(res[0]["Seconds"] * 1000);
-    console.log(typeof temp);
+    let temp = new Date(res[0]["Year"].toString());
+    console.log(xScale(temp));
   });
